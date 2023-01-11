@@ -9,7 +9,7 @@ myWs.onmessage = (message) => {
     let parseMessage = JSON.parse(message.data)
     if (parseMessage.action === 'GRID') {
         let board = []
-        const grid = 10;
+        const grid = Math.sqrt(parseMessage.data.length);
         for (let i = grid; i <= grid**2 ; i += grid ) {
             board.push(parseMessage.data.slice(i - grid, i).join(' '));
         }
@@ -29,7 +29,7 @@ const wsUsers = () => {
     myWs.send(JSON.stringify({action: 'USERS'}));
 }
 
-const wsNewGame = (gridSide = 10, trailLength = 3, gameSpeed = 1000) => {
+const wsNewGame = (gridSide = 15, trailLength = 7, gameSpeed = 800) => {
     const gameSetup = {
         gridSide,
         trailLength,

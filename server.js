@@ -143,10 +143,30 @@ const startGame = (gameId) => {
         }));
       } else {
         clearInterval(gameLoop);
+        sendGameResult(currentGame);
       }
     }, gameInfo.gameSpeed)
   }, 5000);
 }
+
+const sendGameResult = (currentGame) => {
+  const gameInfo = currentGame.getGameInfo();
+  const firstPlayerId = gameInfo.players.firstPlayer.player;
+  const secondPlayerId = gameInfo.players.secondPlayer.player;
+  const gameWinner = currentGame.getWinner();
+  if (gameWinner === false) {
+    clients[firstPlayerId].send(JSON.stringify({data: 'draw won'}));
+    clients[secondPlayerId].send(JSON.stringify({data: 'draw won'}));
+  } else if (gameWinner === firstPlayerId) {
+    clients[firstPlayerId].send(JSON.stringify({data: 'You win!'}));
+    clients[secondPlayerId].send(JSON.stringify({data: 'You lose!'}));
+  } else if (gameWinner === secondPlayerId) {
+    clients[firstPlayerId].send(JSON.stringify({data: 'You lose!'}));
+    clients[secondPlayerId].send(JSON.stringify({data: 'You win!'}));
+  }
+}
+
+
 
 wsServer.on('connection', onConnect);
 console.log(`Example app listening at ws://localhost:${9000}`)

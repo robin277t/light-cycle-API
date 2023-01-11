@@ -1,5 +1,5 @@
 class Game {
-  constructor (hostPlayer, gridSide = 100, trailLength = 5, gameSpeed = 500) {
+  constructor (hostPlayer, gridSide = 10, trailLength = 5, gameSpeed = 1000) {
     this.gameId = Math.floor(Math.random() * Date.now());
     this.secondPlayer = null;
     this.gridSide = gridSide;
@@ -22,6 +22,7 @@ class Game {
     }
     this.wallArray = this.generateWall(this.gridSide);
     this.gridArray = this.generateGrid(this.gridSide, this.wallArray);
+    this.winner = null;
   }
 
   setSecondPlayer = (userId) => {
@@ -42,6 +43,10 @@ class Game {
 
   getGameId = () => {
     return this.gameId;
+  }
+
+  getWinner = () => {
+    return this.winner;
   }
 
   getGameInfo = () => {
@@ -69,6 +74,7 @@ class Game {
     this.moveCycle(1, this.players.firstPlayer.direction, this.players.firstPlayer.position);
     this.moveCycle(2, this.players.secondPlayer.direction, this.players.secondPlayer.position);
     this.gridArray = this.generateGrid(this.gridSide, this.wallArray);
+    this.checkCollision(this.players.firstPlayer, this.players.secondPlayer);
   }
 
   moveCycle = (playerNum, direction, position) => {
@@ -140,6 +146,39 @@ class Game {
     }
     return wallArray;
   }
+
+  checkCollision = (firstPlayer, secondPlayer) => {
+    let firstWin = false;
+    let secondWin = false;
+    if (
+        this.wallArray.includes(firstPlayer.position) 
+        || secondPlayer.trail.includes(firstPlayer.position)
+        || firstPlayer.trail.includes(firstPlayer.position)
+        || firstPlayer.position === secondPlayer.position
+      ) {
+        secondWin = true;
+    };
+    if (
+      this.wallArray.includes(secondPlayer.position) 
+      || secondPlayer.trail.includes(secondPlayer.position)
+      || firstPlayer.trail.includes(secondPlayer.position)
+      || firstPlayer.position === secondPlayer.position
+    ) {
+      firstWin = true;
+    }
+
+    if (firstWin && secondWin) {
+      this.winner = false;
+      this.stopGame();
+    } else if (firstWin) {
+      this.winner = firstPlayer.player;
+      this.stopGame();
+    } else if (secondWin) {
+      this.winner = secondPlayer.player;
+      this.stopGame();
+    }
+  }
+  
 
   generateGrid = (gridSide, wallArray) => {
     const gridArray = []; 
