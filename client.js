@@ -1,4 +1,4 @@
-const myWs = new WebSocket('ws://localhost:9000');
+const myWs = new WebSocket('ws://lightcycle.eu-4.evennode.com:3000');
 myWs.onopen = () => {
     console.log('connected');
 };
