@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const wsServer = new WebSocket.Server({port:9000});
+const wsServer = new WebSocket.Server({port: process.env.PORT});
 const Game = require('./src/game');
 
 const clients = {};
@@ -10,7 +10,6 @@ const onConnect = (wsClient) => {
   const ID = Math.floor(Math.random() * Date.now());
   clients[ID] = wsClient;
   let takePartGame = null;
-
   console.log(`New user ${ID}`);
   wsClient.send(`Hello user ${ID}!`);
 
@@ -169,4 +168,4 @@ const sendGameResult = (currentGame) => {
 
 
 wsServer.on('connection', onConnect);
-console.log(`Example app listening at ws://localhost:${9000}`)
+console.log(`Example app listening at ws://localhost:${process.env.PORT}`)
