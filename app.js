@@ -109,7 +109,7 @@ const onConnect = (wsClient) => {
           const quickGameId = findGame();
           takePartGame = games[quickGameId];
           games[quickGameId].setSecondPlayer(ID);
-          startGame(connectGame.getGameId());
+          startGame(takePartGame.getGameId());
           break;
         default:
           console.log('unknown request');
