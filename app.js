@@ -123,7 +123,8 @@ const onConnect = (wsClient) => {
 
 const findGame = () => {
   for (let gameId in games) {
-    if (games[gameId].getGameInfo().players.secondPlayer === null){
+    let gameInfo = games[gameId].getGameInfo();
+    if (gameInfo.players.secondPlayer.player === null){
       return (gameId);
     }
   }
