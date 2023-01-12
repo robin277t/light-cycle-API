@@ -122,11 +122,11 @@ const onConnect = (wsClient) => {
 }
 
 const findGame = () => {
-  games.map((gameId) => {
+  for (let gameId in games) {
     if (games[gameId].getGameInfo().players.secondPlayer === null){
       return (gameId);
     }
-  })
+  }
 }
 
 const startGame = (gameId) => {
