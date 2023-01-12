@@ -1,6 +1,9 @@
-const myWs = new WebSocket('ws://lightcycle.eu-4.evennode.com:3000');
+const myWs = new WebSocket('ws://lightcycle.eu-4.evennode.com');
 myWs.onopen = () => {
     console.log('connected');
+    setInterval(() => {
+        myWs.send(JSON.stringify({action: 'PING'}));
+    },30000);
 };
 myWs.onmessage = (message) => {
     String(message.data)
@@ -19,10 +22,6 @@ myWs.onmessage = (message) => {
 
 const wsEcho = (value) => {
     myWs.send(JSON.stringify({action: 'ECHO', data: value.toString()}));
-}
-
-const wsPing = () => {
-    myWs.send(JSON.stringify({action: 'PING'}));
 }
 
 const wsUsers = () => {

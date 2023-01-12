@@ -11,7 +11,7 @@ const onConnect = (wsClient) => {
   clients[ID] = wsClient;
   let takePartGame = null;
   console.log(`New user ${ID}`);
-  wsClient.send(`Hello user ${ID}!`);
+  wsClient.send(JSON.stringify({action: 'HELLO', data: `Hello user ${ID}!`}));
 
   wsClient.on('close', () => {
     console.log(`user ${ID} disconnect`);
@@ -30,13 +30,13 @@ const onConnect = (wsClient) => {
 
         case 'PING':
           setTimeout(() => {
-            wsClient.send('PONG');
+            wsClient.send(JSON.stringify({action: 'MESSAGE', data:'PONG'}));
           }, 1000);
           break;
 
         case 'USERS':
           for (let id in clients) {
-            wsClient.send(JSON.stringify({user_id: id}));
+            wsClient.send(JSON.stringify({action: 'MESSAGE', data: id}));
           }
           break;
 
@@ -55,7 +55,7 @@ const onConnect = (wsClient) => {
           games[newGame.getGameId()] = newGame;
           takePartGame = newGame;
           console.log(newGame);
-          wsClient.send(JSON.stringify(newGame.getGameId()));
+          wsClient.send(JSON.stringify({action: 'MESSAGE', data: newGame.getGameId()}));
           break;
 
         case 'GAME_LIST':
@@ -72,7 +72,7 @@ const onConnect = (wsClient) => {
             takePartGame = connectGame;
             startGame(connectGame.getGameId());
           } else {
-            wsClient.send(JSON.stringify({text: 'game unavailable'}));
+            wsClient.send(JSON.stringify({action: 'MESSAGE', data: 'game unavailable'}));
           }
           break;
 
@@ -83,7 +83,7 @@ const onConnect = (wsClient) => {
               data: takePartGame.getGrid(),
             }))
           } else {
-            wsClient.send(JSON.stringify({text: 'You are not in the game'}));
+            wsClient.send(JSON.stringify({action: 'MESSAGE', data: 'You are not in the game'}));
           }
           break;
         
@@ -121,8 +121,8 @@ const startGame = (gameId) => {
   const gameInfo = currentGame.getGameInfo();
   let timer = 5;
   const startTimer = setInterval(() => {
-      clients[gameInfo.players.firstPlayer.player].send(`${timer}...`);
-      clients[gameInfo.players.secondPlayer.player].send(`${timer}...`);
+      clients[gameInfo.players.firstPlayer.player].send(JSON.stringify({action: 'TIMER', data: timer}));
+      clients[gameInfo.players.secondPlayer.player].send(JSON.stringify({action: 'TIMER', data: timer}));
       timer > 1 ? timer-- : clearInterval(startTimer);
     }, 1000);
   
@@ -154,14 +154,14 @@ const sendGameResult = (currentGame) => {
   const secondPlayerId = gameInfo.players.secondPlayer.player;
   const gameWinner = currentGame.getWinner();
   if (gameWinner === false) {
-    clients[firstPlayerId].send(JSON.stringify({data: 'draw won'}));
-    clients[secondPlayerId].send(JSON.stringify({data: 'draw won'}));
+    clients[firstPlayerId].send(JSON.stringify({action: 'WINNER', data: 'draw won'}));
+    clients[secondPlayerId].send(JSON.stringify({action: 'WINNER', data: 'draw won'}));
   } else if (gameWinner === firstPlayerId) {
-    clients[firstPlayerId].send(JSON.stringify({data: 'You win!'}));
-    clients[secondPlayerId].send(JSON.stringify({data: 'You lose!'}));
+    clients[firstPlayerId].send(JSON.stringify({action: 'WINNER', data: 'You win!'}));
+    clients[secondPlayerId].send(JSON.stringify({action: 'WINNER', data: 'You lose!'}));
   } else if (gameWinner === secondPlayerId) {
-    clients[firstPlayerId].send(JSON.stringify({data: 'You lose!'}));
-    clients[secondPlayerId].send(JSON.stringify({data: 'You win!'}));
+    clients[firstPlayerId].send(JSON.stringify({action: 'WINNER', data: 'You lose!'}));
+    clients[secondPlayerId].send(JSON.stringify({action: 'WINNER', data: 'You win!'}));
   }
 }
 
