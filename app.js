@@ -16,6 +16,7 @@ const onConnect = (wsClient) => {
   wsClient.on('close', () => {
     console.log(`user ${ID} disconnect`);
     delete clients[ID];
+    if (takePartGame != null) {delete games[takePartGame];}
   });
 
   wsClient.on('message', (message) => {
@@ -104,7 +105,12 @@ const onConnect = (wsClient) => {
             wsClient.send(JSON.stringify({text: 'You are not in the game'}));
           }
           break;
-
+        case 'GAME_QUICK':
+          const quickGameId = findGame();
+          takePartGame = games[quickGameId];
+          games[quickGameId].setSecondPlayer(ID);
+          startGame(connectGame.getGameId());
+          break;
         default:
           console.log('unknown request');
           break;
@@ -113,6 +119,14 @@ const onConnect = (wsClient) => {
       console.log('ERROR:', error)
     }
   });
+}
+
+const findGame = () => {
+  games.map((gameId) => {
+    if (games[gameId].getGameInfo().players.secondPlayer === null){
+      return (gameId);
+    }
+  })
 }
 
 const startGame = (gameId) => {

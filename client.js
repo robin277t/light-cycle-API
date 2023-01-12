@@ -60,3 +60,7 @@ const wsNextMove = () => {
 const wsChangeDirection = (direction) => {
     myWs.send(JSON.stringify({action: 'GAME_DIRECTION', data: direction}))
 }
+
+const wsQuickGame = () => {
+    myWs.send(JSON.stringify({action: 'GAME_QUICK'}))
+}
