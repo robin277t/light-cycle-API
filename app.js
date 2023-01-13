@@ -4,6 +4,7 @@ const Game = require('./src/game');
 
 const clients = {};
 const games = {};
+const quickGameQueue = [];
 
 const onConnect = (wsClient) => {
 
@@ -105,9 +106,17 @@ const onConnect = (wsClient) => {
           break;
         case 'GAME_QUICK':
           const quickGameId = findGame();
-          takePartGame = games[quickGameId];
-          games[quickGameId].setSecondPlayer(ID);
-          startGame(takePartGame.getGameId());
+          console.log(quickGameId);
+          if (quickGameId !== null) {
+            takePartGame = games[quickGameId];
+            games[quickGameId].setSecondPlayer(ID);
+            startGame(takePartGame.getGameId());
+          } else {
+            const newGame = new Game(ID);
+            games[newGame.getGameId()] = newGame;
+            takePartGame = newGame;
+            wsClient.send(JSON.stringify({action: 'MESSAGE', data: newGame.getGameId()}));
+          }
           break;
         default:
           console.log('unknown request');
@@ -126,6 +135,7 @@ const findGame = () => {
       return (gameId);
     }
   }
+  return null;
 }
 
 const startGame = (gameId) => {
