@@ -1,5 +1,5 @@
 class Game {
-  constructor (hostPlayer, gridSide = 10, trailLength = 5, gameSpeed = 1000) {
+  constructor (hostPlayer, gridSide = 50, trailLength = 100, gameSpeed = 100) {
     this.gameId = Math.floor(Math.random() * Date.now());
     this.secondPlayer = null;
     this.gridSide = gridSide;

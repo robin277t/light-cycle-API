@@ -112,7 +112,7 @@ const onConnect = (wsClient) => {
             games[quickGameId].setSecondPlayer(ID);
             startGame(takePartGame.getGameId());
           } else {
-            const newGame = new Game(ID);
+            const newGame = new Game(ID, 50, 100, 100);
             games[newGame.getGameId()] = newGame;
             takePartGame = newGame;
             wsClient.send(JSON.stringify({action: 'MESSAGE', data: newGame.getGameId()}));
