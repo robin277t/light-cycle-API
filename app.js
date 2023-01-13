@@ -55,7 +55,6 @@ const onConnect = (wsClient) => {
           }
           games[newGame.getGameId()] = newGame;
           takePartGame = newGame;
-          console.log(newGame);
           wsClient.send(JSON.stringify({action: 'MESSAGE', data: newGame.getGameId()}));
           break;
 
@@ -66,7 +65,6 @@ const onConnect = (wsClient) => {
           break;
 
         case 'GAME_CONNECT':
-          console.log(jsonMessage);
           const connectGame = games[jsonMessage.data];
           if (connectGame.getGameInfo.secondPlayer == null) {
             connectGame.setSecondPlayer(ID);
